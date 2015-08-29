@@ -12,6 +12,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -51,6 +53,12 @@ public class StataMySQLPlugin {
 	private static String jdbcURL = null;
 	private static Properties connProps = null;
 	private static Connection conn = null;
+	
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+	private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss.SSSSSS");
+	private static final DateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+	private static final DateFormat TIME_TZ_FORMAT = new SimpleDateFormat("HH:mm:ss.SSSSSSZ");
+	private static final DateFormat TIMESTAMP_TZ_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ");
 	
 	public static int help(String[] args) {
 		SFIToolkit.displayln("Usage example:");
@@ -215,15 +223,19 @@ public class StataMySQLPlugin {
 			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, res.getNClob(i).toString());
 			break;
 		case java.sql.Types.DATE:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, res.getDate(i).toString());
+			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, DATE_FORMAT.format(res.getDate(i)));
 			break;
 		case java.sql.Types.TIME:
+			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIME_FORMAT.format(res.getTimestamp(i)));
+			break;
 		case java.sql.Types.TIME_WITH_TIMEZONE:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, res.getTime(i).toString());
+			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIME_TZ_FORMAT.format(res.getTime(i)));
 			break;
 		case java.sql.Types.TIMESTAMP:
+			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIMESTAMP_FORMAT.format(res.getTimestamp(i)));
+			break;
 		case java.sql.Types.TIMESTAMP_WITH_TIMEZONE:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, res.getTimestamp(i).toString());
+			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIMESTAMP_TZ_FORMAT.format(res.getTimestamp(i)));
 			break;
 		default:
 			break;
@@ -271,13 +283,28 @@ public class StataMySQLPlugin {
 		case java.sql.Types.NCHAR:
 		case java.sql.Types.NVARCHAR:
 		case java.sql.Types.VARCHAR:
-		case java.sql.Types.DATE:
-		case java.sql.Types.TIME:
-		case java.sql.Types.TIME_WITH_TIMEZONE:
-		case java.sql.Types.TIMESTAMP:
-		case java.sql.Types.TIMESTAMP_WITH_TIMEZONE:
-			Data.addVarStr(stataVarName, res.getMetaData().getColumnDisplaySize(i) + 4);
+			Data.addVarStr(stataVarName, res.getMetaData().getColumnDisplaySize(i));
 			SFIToolkit.displayln("Added new Str variable '" + stataVarName + "' of legth " + res.getMetaData().getColumnDisplaySize(i) + " to dataset.");
+			break;
+		case java.sql.Types.DATE:
+			Data.addVarStr(stataVarName, 10);
+			SFIToolkit.displayln("Added new Str variable '" + stataVarName + "' of legth 10 to dataset.");
+			break;
+		case java.sql.Types.TIME:
+			Data.addVarStr(stataVarName, 15);
+			SFIToolkit.displayln("Added new Str variable '" + stataVarName + "' of legth 15 to dataset.");
+			break;
+		case java.sql.Types.TIME_WITH_TIMEZONE:
+			Data.addVarStr(stataVarName, 20);
+			SFIToolkit.displayln("Added new Str variable '" + stataVarName + "' of legth 20 to dataset.");
+			break;
+		case java.sql.Types.TIMESTAMP:
+			Data.addVarStr(stataVarName, 26);
+			SFIToolkit.displayln("Added new Str variable '" + stataVarName + "' of legth 26 to dataset.");
+			break;
+		case java.sql.Types.TIMESTAMP_WITH_TIMEZONE:
+			Data.addVarStr(stataVarName, 31);
+			SFIToolkit.displayln("Added new Str variable '" + stataVarName + "' of legth 31 to dataset.");
 			break;
 		default:
 			SFIToolkit.errorln("Unsupported result column type for column: " + stataVarName);
@@ -285,5 +312,4 @@ public class StataMySQLPlugin {
 			throw new Exception("Unsupported result column type for column: " + stataVarName);
 		}
 	}
-
 }
