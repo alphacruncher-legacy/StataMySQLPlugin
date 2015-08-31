@@ -6,7 +6,11 @@ The plugin uses the official MySQL JDBC driver, it requires Stata v13 or above t
 
 ## Installation
 1. Download the alphacruncher_stataMySQLPlugin_1.0.jar from GitHub, and copy it to the local private ADO folder (```C:\ado\private\```)
-2. Start Stata and run ```javacall com.alphacruncher.StataMySQLPlugin help``` to check if the plug-in is loaded.
+2. Start Stata and run 
+```
+javacall com.alphacruncher.StataMySQLPlugin help
+``` 
+to check if the plug-in is loaded.
 
 ## User's Guide
 Currently only SELECT queries are supported, as the plug-in is intended to be used to query non-volatile reference data.
@@ -20,13 +24,17 @@ password=<your password>
 Do not enclose your username and password in quotes. This file is needed so you wouldn't have your password in clear text in the Stata session.
  
 2. Initialize the MySQL driver by running the following command, specifying the JDBC URL of the database you wish to connect to and the password file created in the previous step:
-```javacall com.alphacruncher.StataMySQLPlugin initialize, args("jdbc:mysql://host:port/db" "C:\\Users\\username\\username.pass")```
+```
+javacall com.alphacruncher.StataMySQLPlugin initialize, args("jdbc:mysql://host:port/db" "C:\\Users\\username\\username.pass")
+```
 
 The JDBC URL has the following format: jdbc:mysql://host:port/database
 This command only needs to be run once per session, or when you wish to connect as another user or connect to another database.
  
 3. Run your query against the database with the following command:
-```javacall com.alphacruncher.StataMySQLPlugin query, args("SELECT * FROM ... LIMIT 100 ")```
+```
+javacall com.alphacruncher.StataMySQLPlugin query, args("SELECT * FROM ... LIMIT 100 ")
+```
 
 New Stata variables will be created with the names and types of the columns of the result table, and the records will be appended as new observations to the existing observations.
 Date/timestamp columns will be stored in string variables, in the following format: YYYY-mm-dd HH:mm:ss.SSSSSSZ 
