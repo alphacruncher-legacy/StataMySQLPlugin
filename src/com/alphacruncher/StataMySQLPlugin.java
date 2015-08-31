@@ -304,7 +304,7 @@ public class StataMySQLPlugin {
 			break;
 		case java.sql.Types.TIMESTAMP_WITH_TIMEZONE:
 			Data.addVarStr(stataVarName, 31);
-			SFIToolkit.displayln("Added new Str variable '" + stataVarName + "' of legth 31 to dataset.");
+			SFIToolkit.displayln("Added new Str variable '" + stataVarName + "' of legth 33 to dataset.");
 			break;
 		default:
 			SFIToolkit.errorln("Unsupported result column type for column: " + stataVarName);
