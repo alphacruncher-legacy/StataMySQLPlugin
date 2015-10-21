@@ -7,11 +7,19 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.sql.Clob;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.NClob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -157,7 +165,10 @@ public class StataMySQLPlugin {
 		    SFIToolkit.errorln("VendorError: " + e.getErrorCode());
 		    return (198);
 		} catch (Exception e) {
-			SFIToolkit.error("Failed to query database: " + e.getMessage());
+			SFIToolkit.errorln("Failed to query database: " + e.getMessage());
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			SFIToolkit.errorln(sw.toString());
 			return (198);
 		} finally {
 			 if (res != null) {
@@ -188,25 +199,35 @@ public class StataMySQLPlugin {
 		switch (columnTypes.get(i-1)) {
 		case java.sql.Types.BIGINT:
 		case java.sql.Types.ROWID:
-			Data.storeNum(stataVarIndices.get(i-1), initialObs + obs, res.getLong(i));
+			long val = res.getLong(i);
+			if (!res.wasNull())
+				Data.storeNum(stataVarIndices.get(i-1), initialObs + obs, val);
 			break;
 		case java.sql.Types.INTEGER:
 		case java.sql.Types.SMALLINT:
 		case java.sql.Types.TINYINT:
-			Data.storeNum(stataVarIndices.get(i-1), initialObs + obs, res.getInt(i));
+			int val2 = res.getInt(i);
+			if (!res.wasNull())
+				Data.storeNum(stataVarIndices.get(i-1), initialObs + obs, val2);
 			break;
 		case java.sql.Types.BOOLEAN:
 		case java.sql.Types.BIT:
-			Data.storeNum(stataVarIndices.get(i-1), initialObs + obs, res.getBoolean(i) ? 1 : 0);
+			boolean val3 = res.getBoolean(i);
+			if (!res.wasNull())
+				Data.storeNum(stataVarIndices.get(i-1), initialObs + obs, val3 ? 1 : 0);
 			break;
 		case java.sql.Types.DECIMAL:
 		case java.sql.Types.NUMERIC:
-			Data.storeNum(stataVarIndices.get(i-1), initialObs + obs, res.getBigDecimal(i).doubleValue());
+			BigDecimal val4 = res.getBigDecimal(i);
+			if (!res.wasNull())
+				Data.storeNum(stataVarIndices.get(i-1), initialObs + obs, val4.doubleValue());
 			break;
 		case java.sql.Types.DOUBLE:
 		case java.sql.Types.FLOAT:
 		case java.sql.Types.REAL:
-			Data.storeNum(stataVarIndices.get(i-1), initialObs + obs, res.getDouble(i));
+			double val5 = res.getDouble(i);
+			if (!res.wasNull())
+				Data.storeNum(stataVarIndices.get(i-1), initialObs + obs, val5);
 			break;
 		case java.sql.Types.CHAR:
 		case java.sql.Types.NCHAR:
@@ -214,28 +235,44 @@ public class StataMySQLPlugin {
 		case java.sql.Types.VARCHAR:
 		case java.sql.Types.LONGVARCHAR:
 		case java.sql.Types.LONGNVARCHAR:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, res.getString(i));
+			String val6 = res.getString(i);
+			if (!res.wasNull())
+				Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, val6);
 			break;
 		case java.sql.Types.CLOB:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, res.getClob(i).toString());
+			Clob val7 = res.getClob(i);
+			if (!res.wasNull())
+				Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, val7.toString());
 			break;
 		case java.sql.Types.NCLOB:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, res.getNClob(i).toString());
+			NClob val8 = res.getNClob(i);
+			if (!res.wasNull())
+				Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, val8.toString());
 			break;
 		case java.sql.Types.DATE:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, DATE_FORMAT.format(res.getDate(i)));
+			Date val9 = res.getDate(i);
+			if (!res.wasNull())
+				Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, DATE_FORMAT.format(val9));
 			break;
 		case java.sql.Types.TIME:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIME_FORMAT.format(res.getTimestamp(i)));
+			Time val10 = res.getTime(i);
+			if (!res.wasNull())
+				Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIME_FORMAT.format(val10));
 			break;
 		case java.sql.Types.TIME_WITH_TIMEZONE:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIME_TZ_FORMAT.format(res.getTime(i)));
+			Time val11 = res.getTime(i);
+			if (!res.wasNull())
+				Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIME_TZ_FORMAT.format(val11));
 			break;
 		case java.sql.Types.TIMESTAMP:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIMESTAMP_FORMAT.format(res.getTimestamp(i)));
+			Timestamp val12 = res.getTimestamp(i);
+			if (!res.wasNull())
+				Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIMESTAMP_FORMAT.format(val12));
 			break;
 		case java.sql.Types.TIMESTAMP_WITH_TIMEZONE:
-			Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIMESTAMP_TZ_FORMAT.format(res.getTimestamp(i)));
+			Timestamp val13 = res.getTimestamp(i);
+			if (!res.wasNull())
+				Data.storeStr(stataVarIndices.get(i-1), initialObs + obs, TIMESTAMP_TZ_FORMAT.format(val13));
 			break;
 		default:
 			break;
