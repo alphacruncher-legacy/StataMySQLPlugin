@@ -126,6 +126,7 @@ public class StataMySQLPlugin {
 			stmnt = conn.prepareStatement(args[0],
 	                   ResultSet.TYPE_FORWARD_ONLY, //or ResultSet.TYPE_FORWARD_ONLY
 	                   ResultSet.CONCUR_READ_ONLY);
+			stmnt.setFetchSize(Integer.MIN_VALUE);
 			res = stmnt.executeQuery();
 			int columnCount = res.getMetaData().getColumnCount();
 			List<Integer> columnTypes = new ArrayList<Integer>(columnCount);
