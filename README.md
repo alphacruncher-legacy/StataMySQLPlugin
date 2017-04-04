@@ -15,6 +15,12 @@ to check if the plug-in is loaded.
 ## User's Guide
 Currently only SELECT queries are supported, as the plug-in is intended to be used to query non-volatile reference data.
 
+If you plan to select a large number of records from a table, a preparatory step is required, by entering the following Stata command to increase the memory available to the database driver (needs to be set only once):
+   ```
+   set java_heapmax 4096
+   ```
+It is required to restart Stata after this command.
+
 1. First, you need to create a password file on the local file system, preferably under ```C:\Users\<your user>```, which should contain the following:
    ```
    user=<your username>
