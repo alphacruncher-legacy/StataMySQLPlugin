@@ -116,14 +116,16 @@ public class StataMySQLPlugin {
 			SFIToolkit.errorln("Please specify the SELECT query to execute.");
 			return (198);
 		}
-		int initialObs = Data.getObsCount();
+		long initialObs = Data.getObsTotal();
 		PreparedStatement stmnt = null;
 		ResultSet res = null;
 		try {
 			conn = DriverManager.getConnection(jdbcURL, connProps);
 			SFIToolkit.displayln("Successfully connected to the database, running query...");
 			
-			stmnt = conn.prepareStatement(args[0]);
+			stmnt = conn.prepareStatement(args[0],
+	                   ResultSet.TYPE_FORWARD_ONLY, //or ResultSet.TYPE_FORWARD_ONLY
+	                   ResultSet.CONCUR_READ_ONLY);
 			res = stmnt.executeQuery();
 			int columnCount = res.getMetaData().getColumnCount();
 			List<Integer> columnTypes = new ArrayList<Integer>(columnCount);
@@ -143,8 +145,8 @@ public class StataMySQLPlugin {
 			int rowCount = res.getRow();
 			res.beforeFirst();
 			SFIToolkit.displayln("Retrieved " + rowCount + " rows.");
-			Data.setObsCount(rowCount + initialObs);
-			SFIToolkit.displayln("Observation count set to: " + Data.getObsCount());
+			Data.setObsTotal(rowCount + initialObs);
+			SFIToolkit.displayln("Observation count set to: " + Data.getObsTotal());
 			
 			int obs = 0;
 			// Saves the result rows as observation values
@@ -193,7 +195,7 @@ public class StataMySQLPlugin {
 
 	}
 
-	private static void saveRecordToDataset(int initialObs, ResultSet res,
+	private static void saveRecordToDataset(long initialObs, ResultSet res,
 			List<Integer> columnTypes, List<Integer> stataVarIndices, int obs,
 			int i) throws SQLException {
 		switch (columnTypes.get(i-1)) {
