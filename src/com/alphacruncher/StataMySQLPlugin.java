@@ -141,25 +141,18 @@ public class StataMySQLPlugin {
 				
 			}
 			
-			// Gets the result row count, inefficient, but no better way possible
-			res.last();
-			int rowCount = res.getRow();
-			res.beforeFirst();
-			SFIToolkit.displayln("Retrieved " + rowCount + " rows.");
-			Data.setObsTotal(rowCount + initialObs);
-			SFIToolkit.displayln("Observation count set to: " + Data.getObsTotal());
-			
 			int obs = 0;
 			// Saves the result rows as observation values
 			while (res.next()) {
 				++obs;
+				Data.setObsTotal(initialObs + obs);
 				for (int i = 1; i <= columnCount; ++i) {
 					saveRecordToDataset(initialObs, res, columnTypes,
 							stataVarIndices, obs, i);
 				}
 			}
-			
-			SFIToolkit.displayln("Data loaded successfully into observations " + (initialObs + 1) + " to " + (initialObs + rowCount));
+			SFIToolkit.displayln("Retrieved " + obs + " rows.");
+			SFIToolkit.displayln("Data loaded successfully into observations " + (initialObs + 1) + " to " + (initialObs + obs));
 			return 0;
 			
 		} catch (SQLException e) {
